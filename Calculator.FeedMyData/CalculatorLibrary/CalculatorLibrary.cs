@@ -1,13 +1,14 @@
 ﻿using Newtonsoft.Json;
+using System.Dynamic;
 using System.Text.RegularExpressions;
 
 namespace CalculatorLibrary;
 
 public class Calculator
 {
-  public int useCount = 0;
+  public int UseCount { get; private set; }
   JsonWriter writer;
-  public List<OperationLog> history = new();
+  public List<OperationLog> History { get; private set; } = new();
 
   public Calculator()
   {
@@ -63,19 +64,22 @@ public class Calculator
         break;
     }
 
-    if (!Regex.IsMatch(op, "^(sr|sin)$"))
+    if (result != double.NaN)
     {
-      OperationLog newLog = new(operation, result, num1, num2);
-      history.Add(newLog);
-    }
+      if (!Regex.IsMatch(op, "^(sr|sin)$"))
+      {
+        OperationLog newLog = new(operation, result, num1, num2);
+        History.Add(newLog);
+      }
 
-    else
-    {
-      OperationLog newLog = new(operation, result, num1);
-      history.Add(newLog);
-    }
+      else
+      {
+        OperationLog newLog = new(operation, result, num1);
+        History.Add(newLog);
+      }
 
-    useCount++;
+      UseCount++;
+    }
     return result;
   }
 
@@ -83,11 +87,11 @@ public class Calculator
   {
     writer.WriteStartObject();
     writer.WritePropertyName("CalculatorUsage");
-    writer.WriteValue(useCount);
+    writer.WriteValue(UseCount);
     writer.WritePropertyName("Operations");
     writer.WriteStartArray();
 
-    foreach (OperationLog operation in history)
+    foreach (OperationLog operation in History)
     {
       writer.WriteValue(operation.Display());
       Console.WriteLine(operation.Display());
@@ -96,6 +100,11 @@ public class Calculator
     writer.WriteEndArray();
     writer.WriteEndObject();
     writer.Close();
+  }
+
+  public void ClearHistory()
+  {
+    History.Clear();
   }
 }
 

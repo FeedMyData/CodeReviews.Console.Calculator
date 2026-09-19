@@ -29,11 +29,11 @@ class Program
       Console.WriteLine("\tsr - Square Root");
       Console.WriteLine("\tsin - Sin");
 
-      if (calculator.history.Count >= 1)
+      if (calculator.History.Count() >= 1)
       {
         Console.WriteLine("\t-------");
-        Console.WriteLine("\th - Display calculations history");
-        Console.WriteLine("\thdel - Delete calculations history");
+        Console.WriteLine("\th - Display calculations History");
+        Console.WriteLine("\thdel - Delete calculations History");
       }
 
       string op = "";
@@ -48,7 +48,7 @@ class Program
 
       else if (Regex.IsMatch(op, "^(hdel)$"))
       {
-        calculator.history.Clear();
+        calculator.ClearHistory();
         Console.WriteLine("All previous calculations were successfully deleted.");
       }
 
@@ -73,7 +73,7 @@ class Program
     Console.WriteLine("-------- History -------");
     Console.WriteLine("------------------------");
     Console.WriteLine("Type an '[ID]' with brackets instead of a number to use a result in a new calculation.");
-    foreach (OperationLog operation in calculator.history)
+    foreach (OperationLog operation in calculator.History)
     {
       Console.WriteLine(operation.Display());
     }
@@ -115,7 +115,7 @@ class Program
     while (!double.TryParse(input, out cleanNumber))
     {
       if (input.StartsWith('[') && input.Trim().EndsWith(']') && input.Trim().Length == 5)
-        foreach (OperationLog operation in calculator.history)
+        foreach (OperationLog operation in calculator.History)
           if (input.Trim() == operation.ID)
             return operation.Result;
 
